@@ -23,8 +23,13 @@
 (deftest any
   (is-equiv "foo" s/Any `t/Any))
 
-(deftest schema-pred
+(deftest keywords-work
   (is-equiv :foo s/Keyword 'clojure.lang.Keyword))
+
+(deftest ints-work
+  (is-equiv 3 s/Int `t/AnyInteger)
+  (is-equiv (Long. 3) s/Int `t/AnyInteger)
+  (is-equiv (clojure.lang.BigInt/fromLong 3) s/Int `t/AnyInteger))
 
 (deftest hmaps-work
   (let [v {:foo 5}
@@ -98,6 +103,11 @@
         t `(t/HMap :mandatory {:foo java.lang.Boolean
                                :bar java.lang.Boolean})]
     (is-equiv {:foo true :bar false} s t)))
+
+(deftest intersection
+  (let [s (s/both s/Num s/Int)
+        t '(clojure.core.typed/I Number clojure.core.typed/AnyInteger)]
+    (is-equiv 3 s t)))
 
 (deftest union
   (let [s (s/either java.lang.Boolean java.lang.Long)

@@ -25,7 +25,7 @@
   'clojure.lang.Keyword)
 
 (defmethod convert-predicate 'integer? [s]
-  'clojure.core.typed/Int)
+  `t/AnyInteger)
 
 (t/ann convert-dispath [Schema -> Class])
 (defn convert-dispatch [schema]
@@ -71,6 +71,9 @@
 
 (defmethod convert clojure.lang.IPersistentSet [s]
   (list 'clojure.core.typed/Set (convert (first s))))
+
+(defmethod convert schema.core.Both [s]
+  (conj (map convert (:schemas s)) 'clojure.core.typed/I))
 
 (defmethod convert schema.core.Either [s]
   (conj (map convert (:schemas s)) 'clojure.core.typed/U))
